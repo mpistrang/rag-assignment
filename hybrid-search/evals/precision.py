@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-from retrieval import hybrid_search, vector_search, bm25_search
+from retrieval import hybrid_search, vector_search, bm25_search, HYBRID_WEIGHTS
 from questions import EVAL_QUESTIONS
 
 load_dotenv()
@@ -64,6 +64,7 @@ def run_evaluation(test_questions: list[str], k: int = 5):
     print("=" * 50)
     print("PRECISION EVALUATION")
     print("=" * 50)
+    print(f"Hybrid weights: BM25={HYBRID_WEIGHTS[0]}, Vector={HYBRID_WEIGHTS[1]}")
 
     totals = {"hybrid": [], "vector": [], "bm25": []}
 

@@ -19,11 +19,9 @@ class NomicEmbeddings(Embeddings):
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Embed documents with 'search_document:' prefix."""
-        # prefixed = [f"search_document: {text}" for text in texts]
-        prefixed = [text for text in texts]
+        prefixed = [f"search_document: {text}" for text in texts]
         return self._embeddings.embed_documents(prefixed)
 
     def embed_query(self, text: str) -> list[float]:
         """Embed query with 'search_query:' prefix."""
-        #return self._embeddings.embed_query(f"search_query: {text}")
-        return self._embeddings.embed_query(text)
+        return self._embeddings.embed_query(f"search_query: {text}")

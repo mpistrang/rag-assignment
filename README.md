@@ -71,7 +71,7 @@ Verify services are running:
 docker compose ps
 ```
 
-You should see `rag-mongo`, `rag-langfuse`, and `rag-langfuse-db` running.
+You should see `rag-mongo`, `rag-langfuse-web`, and `rag-langfuse-db` running.
 
 ### 3. Configure LangFuse (Tracing)
 
@@ -156,7 +156,7 @@ The application will prompt for a question.
 | Service  | URL                   | Purpose                   |
 | -------- | --------------------- | ------------------------- |
 | MongoDB  | localhost:27017       | Vector database           |
-| Ollama   | localhost:11434       | Embeddings & LLM (native) |
+| Ollama   | localhost:11434       | Embeddings & LLM (runs on host, not in Docker) |
 | LangFuse | http://localhost:3000 | Tracing & observability   |
 
 ## Design Decisions
@@ -174,7 +174,7 @@ Pure vector search can miss exact terminology. Pure keyword matching may miss se
 
 ### Chunking Strategy
 
-**Choice:** Documents larger than 2000 characters are split into overlapping chunks,
+**Choice:** Documents larger than 2000 characters are split into overlapping chunks using a recursive text splitter.
 
 **Rationale:** The local embedding model (`nomic-embed-text`) has context limits. While most product documentation pages are small (~300-500 tokens), some larger documents exceed the model's context window.
 
@@ -188,7 +188,7 @@ This approach balances retrieval precision (keeping related content together) wi
 
 **RRF Constant (k=60):** Standard default from the original RRF paper. Higher values reduce the influence of rank position, giving more equal weight to all retrieved documents.
 
-**Weights (0.5 BM25 / 0.5 Vector):** Equal weighting as a balanced starting point. The retrieval module exposes these as parameters for tuning based on query patterns.
+**Weights:** Configurable via `HYBRID_WEIGHTS` in `retrieval.py`. Default is `[0.4, 0.6]` (BM25, Vector), tunable based on query patterns and eval results.
 
 **Candidate multiplier (3x):** Retrieve 3x the final `k` documents from each method before fusion, ensuring sufficient candidates for RRF to rerank effectively.
 
@@ -236,7 +236,7 @@ hybrid-search/
 
 - **Chunking threshold (2000 chars)**: Larger chunks = more context, but risk exceeding embedding model limits
 - **RRF k=60**: Standard value; lower = sharper rank distinctions, higher = flatter
-- **Equal BM25/vector weights**: Neutral starting point; tune based on query patterns
+- **BM25/vector weights**: Configurable; default favors vector slightly (0.4/0.6)
 
 ## Evaluation Results
 

@@ -32,6 +32,10 @@ INDEX_NAME = "vector_index"
 # RRF constant k=60 is standard (from original RRF paper)
 RRF_K = 60
 
+# Weights for hybrid search: [BM25, Vector]
+# Tune based on eval results. Vector-heavy since semantic queries dominate.
+HYBRID_WEIGHTS = [0.4, 0.6]
+
 
 def get_mongo_client():
     return MongoClient(MONGO_DB_URL)
@@ -73,19 +77,31 @@ def load_documents_for_bm25() -> list[Document]:
         client.close()
 
 
-def reciprocal_rank_fusion(result_lists: list[list[Document]], k: int = RRF_K) -> list[Document]:
+def reciprocal_rank_fusion(
+    result_lists: list[list[Document]],
+    weights: list[float] = None,
+    k: int = RRF_K
+) -> list[Document]:
     """
     Combine ranked lists using Reciprocal Rank Fusion.
-    Score = sum(1 / (k + rank)) for each list where doc appears.
+    Score = weight * (1 / (k + rank)) for each list where doc appears.
     Docs in multiple lists get boosted scores.
+
+    Args:
+        result_lists: List of ranked document lists (e.g., [bm25_results, vector_results])
+        weights: Weight for each list (e.g., [0.4, 0.6]). Defaults to equal weights.
+        k: RRF constant (default 60)
     """
+    if weights is None:
+        weights = [1.0] * len(result_lists)
+
     scores = defaultdict(float)
     doc_map = {}
 
-    for doc_list in result_lists:
+    for weight, doc_list in zip(weights, result_lists):
         for rank, doc in enumerate(doc_list):
             doc_key = hash(doc.page_content)
-            scores[doc_key] += 1.0 / (k + rank + 1)
+            scores[doc_key] += weight * (1.0 / (k + rank + 1))
             if doc_key not in doc_map:
                 doc_map[doc_key] = doc
 
@@ -93,11 +109,24 @@ def reciprocal_rank_fusion(result_lists: list[list[Document]], k: int = RRF_K) -
     return [doc_map[key] for key in sorted_keys]
 
 
-def hybrid_search(query: str, k: int = 5, documents: list[Document] = None) -> list[Document]:
+def hybrid_search(
+    query: str,
+    k: int = 5,
+    documents: list[Document] = None,
+    weights: list[float] = None
+) -> list[Document]:
     """
     Hybrid search: BM25 + Vector + RRF fusion.
     Retrieves 3x candidates from each method, then RRF picks the best k.
+
+    Args:
+        query: Search query
+        k: Number of results to return
+        documents: Pre-loaded documents for BM25 (optional, loads if not provided)
+        weights: [BM25_weight, Vector_weight] for RRF fusion. Defaults to HYBRID_WEIGHTS.
     """
+    if weights is None:
+        weights = HYBRID_WEIGHTS
     candidate_k = k * 3
 
     if documents is None:
@@ -116,8 +145,8 @@ def hybrid_search(query: str, k: int = 5, documents: list[Document] = None) -> l
     finally:
         client.close()
 
-    # Combine with RRF
-    combined = reciprocal_rank_fusion([bm25_results, vector_results])
+    # Combine with RRF (weights: [BM25, Vector])
+    combined = reciprocal_rank_fusion([bm25_results, vector_results], weights=weights)
     return combined[:k]
 
 
