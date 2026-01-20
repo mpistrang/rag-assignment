@@ -22,6 +22,7 @@ product-documentation/*
 hybrid-search/questions_proprietary.py
 
 
+results.md
 
 # Docker
 .docker/
