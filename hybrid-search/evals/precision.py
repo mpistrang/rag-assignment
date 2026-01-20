@@ -64,7 +64,6 @@ def run_evaluation(test_questions: list[str], k: int = 5):
     print("=" * 50)
     print("PRECISION EVALUATION")
     print("=" * 50)
-    print(f"Hybrid weights: BM25={HYBRID_WEIGHTS[0]}, Vector={HYBRID_WEIGHTS[1]}")
 
     totals = {"hybrid": [], "vector": [], "bm25": []}
 
@@ -85,6 +84,7 @@ def run_evaluation(test_questions: list[str], k: int = 5):
     print("\n" + "=" * 50)
     print("AVERAGE PRECISION")
     print("=" * 50)
+    print(f"Hybrid weights: BM25={HYBRID_WEIGHTS[0]}, Vector={HYBRID_WEIGHTS[1]}")
     avgs = {}
     for method, scores in totals.items():
         avgs[method] = sum(scores) / len(scores) if scores else 0

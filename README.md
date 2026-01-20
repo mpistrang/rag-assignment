@@ -12,6 +12,7 @@ sequenceDiagram
     participant A as App
     participant O as Ollama
     participant M as MongoDB
+    participant L as LangFuse
 
     note over A: Ingestion
     A->>O: Embed chunks
@@ -27,6 +28,9 @@ sequenceDiagram
     M-->>A: Results (RRF fusion)
     A->>O: Generate answer
     A-->>U: Answer + sources
+
+    note over A: Tracing
+    A-->>L: Traces (async)
 ```
 
 - **Vector Database**: MongoDB Atlas (Docker)
@@ -153,11 +157,11 @@ The application will prompt for a question.
 
 ## Services
 
-| Service  | URL                   | Purpose                   |
-| -------- | --------------------- | ------------------------- |
-| MongoDB  | localhost:27017       | Vector database           |
+| Service  | URL                   | Purpose                                        |
+| -------- | --------------------- | ---------------------------------------------- |
+| MongoDB  | localhost:27017       | Vector database                                |
 | Ollama   | localhost:11434       | Embeddings & LLM (runs on host, not in Docker) |
-| LangFuse | http://localhost:3000 | Tracing & observability   |
+| LangFuse | http://localhost:3000 | Tracing & observability                        |
 
 ## Design Decisions
 
