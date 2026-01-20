@@ -1,0 +1,27 @@
+# Environment
+.env
+
+venv/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# AI Tooling
+.claude/
+
+# Product docs (proprietary)
+product-documentation/*
+!product-documentation/Example Page — Widget Manager.md
+# Proprietary questions (company-specific test data)
+hybrid-search/questions_proprietary.py
+
+
+
+# Docker
+.docker/
