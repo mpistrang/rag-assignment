@@ -15,8 +15,8 @@ from questions import EVAL_QUESTIONS
 
 load_dotenv()
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_LLM_MODEL = os.getenv("OLLAMA_LLM_MODEL", "llama3.2")
+OLLAMA_BASE_URL = os.environ["OLLAMA_BASE_URL"]
+OLLAMA_LLM_MODEL = os.environ["OLLAMA_LLM_MODEL"]
 
 RELEVANCE_PROMPT = """Does this document help answer the question?
 

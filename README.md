@@ -151,20 +151,6 @@ docker compose run --rm app python hybrid-search/generation.py
 
 The application will prompt for a question.
 
-## Project Structure
-
-```
-├── docker-compose.yml      # MongoDB, LangFuse, and Python app services
-├── Dockerfile              # Python application container
-├── requirements.txt        # Python dependencies
-├── hybrid-search/          # RAG implementation
-│   ├── ingestion.py        # Document loading and indexing
-│   ├── retrieval.py        # Hybrid search retrieval
-│   ├── generation.py       # LLM response generation
-│   └── evals/              # Evaluation scripts
-└── product-documentation/  # Source documents (mounted as volume)
-```
-
 ## Services
 
 | Service  | URL                   | Purpose                   |

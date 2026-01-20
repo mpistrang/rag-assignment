@@ -17,9 +17,9 @@ from embeddings import NomicEmbeddings
 load_dotenv()
 
 # Configuration
-MONGO_DB_URL = os.getenv("MONGO_DB_URL", "mongodb://localhost:27017")
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "nomic-embed-text")
+MONGO_DB_URL = os.environ["MONGO_DB_URL"]
+OLLAMA_BASE_URL = os.environ["OLLAMA_BASE_URL"]
+OLLAMA_MODEL = os.environ["OLLAMA_MODEL"]
 
 DB_NAME = "product_docs_rag"
 COLLECTION_NAME = "hybrid_search"

@@ -15,9 +15,9 @@ from retrieval import hybrid_search, format_retrieved_context
 load_dotenv()
 
 # Configuration
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_LLM_MODEL = os.getenv("OLLAMA_LLM_MODEL", "llama3.2")
-LANGFUSE_HOST = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
+OLLAMA_BASE_URL = os.environ["OLLAMA_BASE_URL"]
+OLLAMA_LLM_MODEL = os.environ["OLLAMA_LLM_MODEL"]
+LANGFUSE_HOST = os.environ["LANGFUSE_HOST"]
 
 # LangFuse for observability (auto-traces LangChain operations)
 from langfuse import Langfuse, get_client
